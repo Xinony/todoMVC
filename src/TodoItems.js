@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import FlipMove from "react-flip-move";
+
 class TodoItems extends Component {
+
     constructor(props) {
         super(props);
-
         this.createTasks = this.createTasks.bind(this);
     }
 
