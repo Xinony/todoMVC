@@ -1,5 +1,4 @@
 //state:所有数据信息
-import {number} from "prop-types";
 
 const defaultState = {
     items:[]
