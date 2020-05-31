@@ -1,12 +1,16 @@
 import React, { Component } from "react";
 import TodoItems from "./TodoItems";
 import "./TodoList.css";
-class TodoList extends Component {
+import storage from "./localStorage";
+
+var localItems=storage.get("items")
+
+class TodoListLocalStorage extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            items: []
+            items: localItems
         };
         this.addItem = this.addItem.bind(this);
         this.deleteItem = this.deleteItem.bind(this);
@@ -20,6 +24,7 @@ class TodoList extends Component {
         this.setState({
             items: filteredItems
         });
+        storage.set('items',filteredItems);
     }
 
     addItem(e) {
@@ -28,17 +33,15 @@ class TodoList extends Component {
                 text: this._inputElement.value,
                 key: Date.now()
             };
-
-            this.setState((prevState) => {
-                return {
-                    items: prevState.items.concat(newItem)
-                };
+            var addedItems = this.state.items.concat(newItem)
+            this.setState({
+                    items: addedItems
             });
-
+            storage.set('items',addedItems);
             this._inputElement.value = "";
         }
         console.log(this.state.items);
-
+        console.log("localStorage:",storage.get("items"))
         e.preventDefault();
     }
     render() {
@@ -58,4 +61,4 @@ class TodoList extends Component {
     }
 }
 
-export default TodoList;
+export default TodoListLocalStorage;

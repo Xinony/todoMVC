@@ -32,5 +32,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "prop-types": "^15.7.2",
+    "react-router": "^5.2.0",
+    "redux": "^4.0.5"
   }
 }
