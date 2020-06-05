@@ -2,13 +2,13 @@
     padding: 10px;
     font-size: 16px;
     border: 2px solid #FFF;
-    width: 165px;
+    width: 225px;
+    border-radius: 5px;
 }
 .todoListMain .header button {
     padding: 10px;
     font-size: 16px;
-    margin: 10px;
-    margin-right: 0px;
+    margin: 10px 0px 10px 10px;
     background-color: #0066FF;
     color: #FFF;
     border: 2px solid #0066FF;
@@ -48,3 +48,66 @@ ul.theList {
     background-color: pink;
     cursor: pointer;
 }
+.todoListMain .theList input {
+    padding: 5px;
+    font-size: 16px;
+    border: 2px solid #FFF;
+    width: 190px;
+    border-radius: 5px;
+}
+
+.todoListMain .theList .check{
+    width: 15px;
+    height: 15px;
+    position: relative;
+    float: left;
+    display: inline-block;
+    margin-top: 19px;
+}
+.todoListMain .username {
+    display: inline-block;
+    color: #0020ff;
+    text-align: center;
+    font-size: 20px;
+    width: 100px;
+}
+
+.todoListMain .logout-button {
+    display: inline-block;
+    border-radius: 100%;
+    background-color: #1e4cf4;
+    border: none;
+    color: #FFFFFF;
+    text-align: center;
+    font-size: 10px;
+    padding: 20px;
+    transition: all 0.5s;
+    cursor: pointer;
+    margin: 5px 0px 5px 50px;
+}
+
+.todoListMain .logout-button span {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+}
+
+.todoListMain .logout-button span:after {
+    content: '»';
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -20px;
+    transition: 0.5s;
+}
+
+.todoListMain .logout-button:hover span {
+    padding-right: 25px;
+}
+
+.todoListMain .logout-button:hover span:after {
+    opacity: 1;
+    right: 0;
+}
+
