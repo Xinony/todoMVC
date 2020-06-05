@@ -1,7 +1,7 @@
-let API_DOMAIN = '/'
+let API_DOMAIN = '/api/'
 export let LOGIN_URL = '/#/login'
 if(process.env.NODE_ENV === 'production') {
-    API_DOMAIN = '/'
+    API_DOMAIN = '/api/'
     LOGIN_URL = '/#/login'
 }
 

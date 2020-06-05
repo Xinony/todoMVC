@@ -84,7 +84,7 @@ router.all('*', (req, res, next) => {
     next();
 });
 
-router.post('/login', (req, res) => {
+router.post('/api/login', (req, res) => {
     var  sql = 'SELECT * FROM user WHERE username =?';
     connection.query(sql,[req.body.username],function (err, result){
         if(err){
@@ -138,7 +138,7 @@ router.post('/login', (req, res) => {
     });
 })
 
-router.post('/regist', (req, res) => {
+router.post('/api/regist', (req, res) => {
     const  sql = 'SELECT * FROM user WHERE username ="'+req.body.username+'"';
     connection.query(sql,function (err, result){
         if(result[0]){
@@ -178,7 +178,7 @@ router.post('/regist', (req, res) => {
     });
 })
 
-router.post('/getTodo', (req, res) => {
+router.post('/api/getTodo', (req, res) => {
     console.log(req.body)
     checkapikey(req.body.userid, req.body.apikey, function (isApikey) {
         if (isApikey.code === API_CODE.OK) {
@@ -206,7 +206,7 @@ router.post('/getTodo', (req, res) => {
     })
 })
 
-router.post('/addTodo', (req, res) => {
+router.post('/api/addTodo', (req, res) => {
     console.log(req.body)
     checkapikey(req.body.userid, req.body.apikey, function (isApikey) {
         if (isApikey.code === API_CODE.OK) {
@@ -244,7 +244,7 @@ router.post('/addTodo', (req, res) => {
     })
 })
 
-router.post('/changeTodo', (req, res) => {
+router.post('/api/changeTodo', (req, res) => {
     console.log(req.body)
     checkapikey(req.body.userid, req.body.apikey, function (isApikey) {
         if (isApikey.code === API_CODE.OK) {
@@ -282,7 +282,7 @@ router.post('/changeTodo', (req, res) => {
     })
 })
 
-router.post('/deleteTodo', (req, res) => {
+router.post('/api/deleteTodo', (req, res) => {
     checkapikey(req.body.userid, req.body.apikey, function (isApikey) {
         if (isApikey.code === API_CODE.OK) {
             var sql = 'SELECT * FROM user WHERE userid =?';
