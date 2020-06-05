@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import TodoItems from "./TodoItems";
+import TodoItems from "./pages/todolist/TodoItems";
 import "./TodoList.css";
 import storage from "./localStorage";
 
@@ -58,7 +58,7 @@ class TodoListLocalStorage extends Component {
                     <form onSubmit={this.addItem}>
                         <input ref={(a) => this._inputElement = a} placeholder="enter task">
                         </input>
-                        <button type="submit">add-state</button>
+                        <button type="submit">add-localStorage</button>
                     </form>
                 </div>
                 <TodoItems entries={this.state.items}

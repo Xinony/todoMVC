@@ -1,19 +1,9 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import "./index.css";
-import TodoList from "./TodoList";
-import TodoListhooks from "./TodoList-hooks";
-import TodoListredux from "./TodoList-redux";
-import TodoListLocalStorage from "./TodoList-localStorage";
+import React from 'react'
+import ReactDOM from 'react-dom'
+import App from './App'
+import './index.css'
 
-var destination = document.querySelector("#container")
-
-ReactDOM.render(
-    <div>
-        <TodoList/>
-        <TodoListhooks/>
-        <TodoListredux/>
-        <TodoListLocalStorage/>
-    </div>,
-    destination
-);
+const Apps = (
+        <App />
+)
+ReactDOM.render(Apps, document.getElementById('root'));
