@@ -11,12 +11,12 @@ class TodoListLocalStorage extends Component {
         super(props);
         if(localItems){
         this.state = {
-            items: []
+            items: localItems
         };
         }
         else{
             this.state = {
-            items: localItems
+            items: []
         };
         }
         this.addItem = this.addItem.bind(this);
