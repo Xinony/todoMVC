@@ -1,12 +1,15 @@
 import React, { Component } from "react";
+
+
 import TodoItems from "./TodoItems";
 import "../../TodoList.css";
-
 import {API_CODE, LOGIN_URL} from "../../common/js/api";
 import {addTodo, deleteTodo, getTodo,changeTodo, logout} from "../../common/js/actions";
 
+
 const ENTER_KEY = 13;
 const ESCAPE_KEY = 27;
+
 
 class TodoList extends Component {
   loginInfo = JSON.parse(window.localStorage.getItem('loginInfo'))

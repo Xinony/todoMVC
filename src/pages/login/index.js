@@ -1,14 +1,18 @@
 import React, { Component } from 'react'
 import MD5 from 'js-md5'
-
-import { API_CODE} from '../../common/js/api'
-
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
 import { Container, Row, Col } from 'reactstrap';
+
+
+import { API_CODE} from '../../common/js/api'
 import '../../common/css/Login.css';
 import {login} from "../../common/js/actions";
+
+
 const salt="xinoxinoxino"
+
+
 class Login extends Component {
 
   state = {
@@ -16,7 +20,6 @@ class Login extends Component {
     password: '',
     loading: false
   }
-
 
   handleAccountChange(event) {
     this.setState({username: event.target.value});

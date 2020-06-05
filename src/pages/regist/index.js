@@ -1,16 +1,18 @@
 import React, { Component } from 'react'
 import MD5 from 'js-md5'
+import { TextField } from 'office-ui-fabric-react/lib/TextField';
+import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
+import { Container, Row, Col } from 'reactstrap';
 
 
 import {API_CODE} from '../../common/js/api'
 import {signup} from "../../common/js/actions";
-
-import { TextField } from 'office-ui-fabric-react/lib/TextField';
-import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
-import { Container, Row, Col } from 'reactstrap';
 import '../../common/css/Login.css';
 
+
 const salt="xinoxinoxino"
+
+
 class regist extends Component {
 
     state = {
