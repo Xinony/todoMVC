@@ -190,35 +190,31 @@ router.post('/api/regist', (req, res) => {
                         res.send(data);
                         return;
                     }
-                    let datenow=moment().format('YYYY-MM-DD')
-                    let datepre=moment(result[0].logintime).format(['YYYY-MM-DD']);
-                    console.log(datenow,datepre)
-                    if(datepre !== datenow) {
-                        let sql2 = 'SELECT * FROM login_times_daily WHERE date =?';
-                        connection.query(sql2, [datenow], function (err, result2) {
-                            console.log(result2)
-                            if (err) {
-                                console.log(err)
-                            }
-                            if (result2[0] !== undefined) {
-                                let times = result2[0].times + 1
-                                let sql3 = 'UPDATE login_times_daily SET `times`=? WHERE date=?';
-                                connection.query(sql3, [times, datenow], function (err, result3) {
-                                    if (err) {
-                                        console.log(err)
-                                    }
-                                })
-                            }
-                            else{
-                                let sql4 = 'INSERT INTO `login_times_daily`(`date`) VALUES (?)';
-                                connection.query(sql4, [datenow], function (err, result4) {
-                                    if (err) {
-                                        console.log(err)
-                                    }
-                                })
-                            }
-                        })
-                    }
+                    let datenow=new moment().format('YYYY-MM-DD')
+                    let sql2 = 'SELECT * FROM login_times_daily WHERE date =?';
+                    connection.query(sql2, [datenow], function (err, result2) {
+                        console.log(result2)
+                        if (err) {
+                            console.log(err)
+                        }
+                        if (result2[0] !== undefined) {
+                            let times = result2[0].times + 1
+                            let sql3 = 'UPDATE login_times_daily SET `times`=? WHERE date=?';
+                            connection.query(sql3, [times, datenow], function (err, result3) {
+                                if (err) {
+                                    console.log(err)
+                                }
+                            })
+                        }
+                        else{
+                            let sql4 = 'INSERT INTO `login_times_daily`(`date`) VALUES (?)';
+                            connection.query(sql4, [datenow], function (err, result4) {
+                                if (err) {
+                                    console.log(err)
+                                }
+                            })
+                        }
+                    })
                     let data={
                         code:API_CODE.OK,
                         messgae:'注册成功',
