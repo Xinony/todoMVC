@@ -120,13 +120,38 @@ router.post('/api/login', (req, res) => {
                             res.send(data);
                         }
                         else {
-                            let data={
-                                code:API_CODE.OK,
-                                message:'登录成功',
-                                data:result[0],
-                                newapikey:apikey
+                            if(moment(result[0].logintime,['YYYY-MM-DD']) !== moment().format('YYYY-MM-DD')) {
+                                let sql2='SELECT * FROM login_times_daily WHERE date =?';
+                                connection.query(sql2,[moment.format('YYYY-MM-DD')],function (err, result2) {
+                                    if(err) {
+                                        let data = {
+                                            code: API_CODE.ERR_DATA,
+                                            message: 'SELECT数据库错误'
+                                        }
+                                        res.send(data);
+                                    }
+                                    if(result2[0]!==undefined){
+                                        let times=result2[0].times+1
+                                        let sql3='UPDATE login_times_daily SET `times`=? WHERE date=?';
+                                        connection.query(sql3,[times,moment.format('YYYY-MM-DD')],function (err, result3) {
+                                            if(err) {
+                                                let data = {
+                                                    code: API_CODE.ERR_DATA,
+                                                    message: 'UPDATE数据库错误'
+                                                }
+                                                res.send(data);
+                                            }
+                                        })
+                                    }
+                                })
+                                let data={
+                                    code:API_CODE.OK,
+                                    message:'登录成功',
+                                    data:result[0],
+                                    newapikey:apikey
+                                }
+                                res.send(data);
                             }
-                            res.send(data);
                         }
                     });
                 }

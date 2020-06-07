@@ -58,12 +58,16 @@ export function checkapikey(callback) {
 
 }
 export function loadtime() {
-    var starttime=window.localStorage.getItem('starttime')
-    window.onload=function () {
-        var loadtime=Date.now()-starttime
-        axios.post(API_LIST.COLLECT_LOAD_TIME, loadtime).then((res) => {
-            console.log(res.data)
-        })
+    if(window.name ===  ""){
+        var starttime=window.localStorage.getItem('starttime')
+        window.onload=function () {
+            var loadtime=Date.now()-starttime;
+            axios.post(API_LIST.COLLECT_LOAD_TIME, {loadtime:loadtime}).then((res) => {
+                console.log(res.data)
+            })
+        }
+        window.name = "isReload"; // 在首次进入页面时我们可以给window.name设置一个固定值
+    }else if(window.name === "isReload"){
 
     }
 }
