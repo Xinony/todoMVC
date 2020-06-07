@@ -6,4 +6,7 @@ import './index.css'
 const Apps = (
         <App />
 )
-ReactDOM.render(Apps, document.getElementById('root'));
+ReactDOM.render(
+    Apps,
+    document.getElementById('root')
+);

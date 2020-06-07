@@ -39,7 +39,9 @@ export const API_LIST = {
     // 修改任务状态--(未）完成
     CHANGE_TODO : API_DOMAIN + 'changeTodo',
     // 删除任务
-    DELETE_TODO: API_DOMAIN + 'deleteTodo'
+    DELETE_TODO: API_DOMAIN + 'deleteTodo',
+    //获取页面加载时间
+    COLLECT_LOAD_TIME:API_DOMAIN + 'collectLoadTime'
 }
 
 

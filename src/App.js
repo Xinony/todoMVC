@@ -3,10 +3,12 @@ import Login from './pages/login'
 import regist from './pages/regist'
 import TodoList from './pages/todolist'
 import { HashRouter, Route, Switch } from 'react-router-dom'
+import {loadtime} from "./common/js/actions";
 
 class App extends Component {
     loginInfo = JSON.parse(window.localStorage.getItem('loginInfo'))
     render() {
+        loadtime();
             return (
                 <Fragment>
                     <HashRouter>

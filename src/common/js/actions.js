@@ -57,3 +57,13 @@ export function checkapikey(callback) {
     })
 
 }
+export function loadtime() {
+    var starttime=window.localStorage.getItem('starttime')
+    window.onload=function () {
+        var loadtime=Date.now()-starttime
+        axios.post(API_LIST.COLLECT_LOAD_TIME, loadtime).then((res) => {
+            console.log(res.data)
+        })
+
+    }
+}

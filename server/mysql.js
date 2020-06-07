@@ -28,53 +28,57 @@ router.use(bodyParser.json());
 connection.connect()
 
 function checkapikey(userid,apikey,callback){
-    var  sql = 'SELECT `apikey` FROM user WHERE userid =?';
-    connection.query(sql,[userid],function (err, result){
-        if(err){
-            let data={
-                code: API_CODE.ERR_NO_DATA,
-                message: '数据库错误'
-            };
-            callback(data);
-            return;
-        }
-        if(result[0]===undefined){
-            let data={
-                code: API_CODE.ERR_LOGOUT,
-                message: '没有该用户'
-            };
-            callback(data);
-        }
-        else{
-            const newapikey = Date.now();
-            var getapikey=result[0].apikey;
-            if(apikey === getapikey){
-                if(newapikey-apikey<APIKEY_KEEP_TIME){
-                    let data={
-                        code: API_CODE.OK,
-                        message: '身份信息验证成功',
-                    };
-                    callback(data);
-                }
-                else{
-                    let data={
-                        code: API_CODE.ERR_LOGOUT,
-                        message: '身份信息已过期，请重新登录！',
-                    };
-                    callback(data);
-                }
-
+    try {
+        var  sql = 'SELECT `apikey` FROM user WHERE userid =?';
+        connection.query(sql,[userid],function (err, result){
+            if(err){
+                let data={
+                    code: API_CODE.ERR_NO_DATA,
+                    message: '数据库错误'
+                };
+                callback(data);
+                return;
             }
-            else
-            {
-                let data = {
+            if(result[0]===undefined){
+                let data={
                     code: API_CODE.ERR_LOGOUT,
-                    message: '身份信息错误，请重新登录！'
+                    message: '没有该用户'
                 };
                 callback(data);
             }
-        }
-    });
+            else{
+                const newapikey = Date.now();
+                var getapikey=result[0].apikey;
+                if(apikey === getapikey){
+                    if(newapikey-apikey<APIKEY_KEEP_TIME){
+                        let data={
+                            code: API_CODE.OK,
+                            message: '身份信息验证成功',
+                        };
+                        callback(data);
+                    }
+                    else{
+                        let data={
+                            code: API_CODE.ERR_LOGOUT,
+                            message: '身份信息已过期，请重新登录！',
+                        };
+                        callback(data);
+                    }
+
+                }
+                else
+                {
+                    let data = {
+                        code: API_CODE.ERR_LOGOUT,
+                        message: '身份信息错误，请重新登录！'
+                    };
+                    callback(data);
+                }
+            }
+        });
+    }catch (e) {
+        console.log(e)
+    }
 }
 
 router.all('*', (req, res, next) => {
@@ -85,239 +89,283 @@ router.all('*', (req, res, next) => {
 });
 
 router.post('/api/login', (req, res) => {
-    var  sql = 'SELECT * FROM user WHERE username =?';
-    connection.query(sql,[req.body.username],function (err, result){
-        if(err){
-            let data={
-                code:API_CODE.ERR_DATA,
-                message:'数据库错误'
+    try{
+        var  sql = 'SELECT * FROM user WHERE username =?';
+        connection.query(sql,[req.body.username],function (err, result){
+            if(err){
+                let data={
+                    code:API_CODE.ERR_DATA,
+                    message:'数据库错误'
+                }
+                res.send(data);
+                return;
             }
-            res.send(data);
-            return;
-        }
-        if(result[0]===undefined){
-            let data={
-                code:API_CODE.ERR_NO_DATA,
-                message:'没有该用户'
+            if(result[0]===undefined){
+                let data={
+                    code:API_CODE.ERR_NO_DATA,
+                    message:'没有该用户'
+                }
+                res.send(data);
             }
-            res.send(data);
-        }
-        else{
-            if(result[0].password === req.body.password){
-                let apikey = Date.now()
-                var sql1='UPDATE user SET `apikey`=?,`logintime`=? WHERE username=?';
-                connection.query(sql1,[apikey,moment().format('YYYY-MM-DD HH:mm:ss'),req.body.username],function (err, result1) {
-                    if (err) {
+            else{
+                if(result[0].password === req.body.password){
+                    let apikey = Date.now()
+                    var sql1='UPDATE user SET `apikey`=?,`logintime`=? WHERE username=?';
+                    connection.query(sql1,[apikey,moment().format('YYYY-MM-DD HH:mm:ss'),req.body.username],function (err, result1) {
+                        if (err) {
+                            let data={
+                                code:API_CODE.ERR_LOGOUT,
+                                message:'登录错误',
+                            }
+                            res.send(data);
+                        }
+                        else {
+                            let data={
+                                code:API_CODE.OK,
+                                message:'登录成功',
+                                data:result[0],
+                                newapikey:apikey
+                            }
+                            res.send(data);
+                        }
+                    });
+                }
+                else
+                {
+                    let data={
+                        code:API_CODE.ERR_DATA,
+                        message:'用户名或密码错误'
+                    }
+                    res.send(data);
+                }
+            }
+
+        });
+    }catch (e) {
+        console.log(e)
+    }
+
+})
+
+router.post('/api/regist', (req, res) => {
+    try{
+        const  sql = 'SELECT * FROM user WHERE username ="'+req.body.username+'"';
+        connection.query(sql,function (err, result){
+            if(result[0]){
+                let data={
+                    code:API_CODE.ERR_DATA,
+                    message:'该用户已存在'
+                }
+                res.send(data);
+            }
+            else{
+                const apikey = Date.now();
+                const logintime = moment().format('YYYY-MM-DD HH:mm:ss');
+                const  sql1 = 'insert into user (username, password, usertype, apikey,logintime) value (?,?,"游客",?,?)';
+                connection.query(sql1,[req.body.username, req.body.password,apikey,logintime],function (err, result){
+                    if(err){
                         let data={
-                            code:API_CODE.ERR_LOGOUT,
-                            message:'登录错误',
+                            code:API_CODE.ERR_DATA,
+                            message:'数据库错误'
                         }
                         res.send(data);
+                        return;
                     }
-                    else {
-                        let data={
-                            code:API_CODE.OK,
-                            message:'登录成功',
-                            data:result[0],
-                            newapikey:apikey
+                    let data={
+                        code:API_CODE.OK,
+                        messgae:'注册成功',
+                        userInfo:{
+                            userid:result.insertId,
+                            username:req.body.username,
+                            usertype:"游客",
+                            apikey:apikey,
+                            logintime:logintime
+                        }
+                    }
+                    res.send(data);
+                });
+            }
+        });
+    }catch (e) {
+        console.log(e)
+    }
+})
+
+router.post('/api/getTodo', (req, res) => {
+    try{
+        checkapikey(req.body.userid, req.body.apikey, function (isApikey) {
+            if (isApikey.code === API_CODE.OK) {
+                const sql = 'SELECT * FROM list WHERE userid =? ';
+                connection.query(sql, [req.body.userid], function (err, result) {
+                    if (result) {
+                        console.log(result)
+                        let data = {
+                            code: API_CODE.OK,
+                            messgae: '获取任务成功',
+                            data: result
+                        }
+                        res.send(data)
+                    } else {
+                        let data = {
+                            code: API_CODE.ERR_NO_DATA,
+                            data: '暂无数据'
+                        }
+                        res.send(data)
+                    }
+                });
+            } else {
+                res.send(isApikey)
+            }
+        })
+    }catch (e) {
+        console.log(e)
+    }
+})
+
+router.post('/api/addTodo', (req, res) => {
+    try{
+        checkapikey(req.body.userid, req.body.apikey, function (isApikey) {
+            if (isApikey.code === API_CODE.OK) {
+                var sql = 'SELECT * FROM user WHERE userid =? ';
+                connection.query(sql, [req.body.userid], function (err, result) {
+                    if (result[0]) {
+                        var sql = 'insert into list (`task`,`userid`,`key`,`creattime`) value (?,?,?,?)';
+                        connection.query(sql, [req.body.task, req.body.userid, req.body.key, moment().format('YYYY-MM-DD HH:mm:ss')], function (err, result) {
+                            if (err) {
+                                let data = {
+                                    code: API_CODE.ERR_DATA,
+                                    data: '数据库错误'
+                                }
+                                res.send(data);
+                                return;
+                            }
+                            let data = {
+                                code: API_CODE.OK,
+                                taskid: result.insertId
+                            }
+                            res.send(data);
+                        });
+                    } else {
+                        let data = {
+                            code: API_CODE.ERR_LOGOUT,
+                            data: "该用户不存在"
                         }
                         res.send(data);
                     }
                 });
+            } else {
+                res.send(isApikey)
             }
-            else
-            {
-                let data={
-                    code:API_CODE.ERR_DATA,
-                    message:'用户名或密码错误'
-                }
-                res.send(data);
-            }
-        }
-
-    });
-})
-
-router.post('/api/regist', (req, res) => {
-    const  sql = 'SELECT * FROM user WHERE username ="'+req.body.username+'"';
-    connection.query(sql,function (err, result){
-        if(result[0]){
-            let data={
-                code:API_CODE.ERR_DATA,
-                message:'该用户已存在'
-            }
-            res.send(data);
-        }
-        else{
-            const apikey = Date.now();
-            const logintime = moment().format('YYYY-MM-DD HH:mm:ss');
-            const  sql1 = 'insert into user (username, password, usertype, apikey,logintime) value (?,?,"游客",?,?)';
-            connection.query(sql1,[req.body.username, req.body.password,apikey,logintime],function (err, result){
-                if(err){
-                    let data={
-                        code:API_CODE.ERR_DATA,
-                        message:'数据库错误'
-                    }
-                    res.send(data);
-                    return;
-                }
-                let data={
-                    code:API_CODE.OK,
-                    messgae:'注册成功',
-                    userInfo:{
-                        userid:result.insertId,
-                        username:req.body.username,
-                        usertype:"游客",
-                        apikey:apikey,
-                        logintime:logintime
-                    }
-                }
-                res.send(data);
-            });
-        }
-    });
-})
-
-router.post('/api/getTodo', (req, res) => {
-    console.log(req.body)
-    checkapikey(req.body.userid, req.body.apikey, function (isApikey) {
-        if (isApikey.code === API_CODE.OK) {
-            const sql = 'SELECT * FROM list WHERE userid =? ';
-            connection.query(sql, [req.body.userid], function (err, result) {
-                if (result) {
-                    console.log(result)
-                    let data = {
-                        code: API_CODE.OK,
-                        messgae: '获取任务成功',
-                        data: result
-                    }
-                    res.send(data)
-                } else {
-                    let data = {
-                        code: API_CODE.ERR_NO_DATA,
-                        data: '暂无数据'
-                    }
-                    res.send(data)
-                }
-            });
-        } else {
-            res.send(isApikey)
-        }
-    })
-})
-
-router.post('/api/addTodo', (req, res) => {
-    console.log(req.body)
-    checkapikey(req.body.userid, req.body.apikey, function (isApikey) {
-        if (isApikey.code === API_CODE.OK) {
-            var sql = 'SELECT * FROM user WHERE userid =? ';
-            connection.query(sql, [req.body.userid], function (err, result) {
-                if (result[0]) {
-                    var sql = 'insert into list (`task`,`userid`,`key`,`creattime`) value (?,?,?,?)';
-                    connection.query(sql, [req.body.task, req.body.userid, req.body.key, moment().format('YYYY-MM-DD HH:mm:ss')], function (err, result) {
-                        if (err) {
-                            console.log(err)
-                            let data = {
-                                code: API_CODE.ERR_DATA,
-                                data: '数据库错误'
-                            }
-                            res.send(data);
-                            return;
-                        }
-                        let data = {
-                            code: API_CODE.OK,
-                            taskid: result.insertId
-                        }
-                        res.send(data);
-                    });
-                } else {
-                    let data = {
-                        code: API_CODE.ERR_LOGOUT,
-                        data: "该用户不存在"
-                    }
-                    res.send(data);
-                }
-            });
-        } else {
-            res.send(isApikey)
-        }
-    })
+        })
+    }catch (e) {
+        console.log(e)
+    }
 })
 
 router.post('/api/changeTodo', (req, res) => {
-    console.log(req.body)
-    checkapikey(req.body.userid, req.body.apikey, function (isApikey) {
-        if (isApikey.code === API_CODE.OK) {
-            var sql = 'SELECT * FROM user WHERE userid =?';
-            connection.query(sql, [req.body.userid],function (err, result) {
-                if (result[0]) {
-                    var sql = 'UPDATE list SET `isdone`=?,`task`=?,`key`=? WHERE taskid=?';
-                    connection.query(sql, [req.body.isdone,req.body.task,req.body.key,req.body.taskid], function (err, result) {
-                        if (err) {
+    try{
+        checkapikey(req.body.userid, req.body.apikey, function (isApikey) {
+            if (isApikey.code === API_CODE.OK) {
+                var sql = 'SELECT * FROM user WHERE userid =?';
+                connection.query(sql, [req.body.userid],function (err, result) {
+                    if (result[0]) {
+                        var sql = 'UPDATE list SET `isdone`=?,`task`=?,`key`=? WHERE taskid=?';
+                        connection.query(sql, [req.body.isdone,req.body.task,req.body.key,req.body.taskid], function (err, result) {
+                            if (err) {
+                                let data = {
+                                    code: API_CODE.ERR_DATA,
+                                    message: '数据库错误'
+                                }
+                                res.send(data);
+                                return;
+                            }
+                            console.log(result)
                             let data = {
-                                code: API_CODE.ERR_DATA,
-                                message: '数据库错误'
+                                code: API_CODE.OK,
+                                message: '修改成功'
                             }
                             res.send(data);
-                            return;
-                        }
-                        console.log(result)
+                        });
+                    } else {
                         let data = {
-                            code: API_CODE.OK,
-                            message: '修改成功'
+                            code: API_CODE.ERR_LOGOUT,
+                            data: "该用户不存在"
                         }
                         res.send(data);
-                    });
-                } else {
-                    let data = {
-                        code: API_CODE.ERR_LOGOUT,
-                        data: "该用户不存在"
                     }
-                    res.send(data);
-                }
-            })
-        } else {
-            res.send(isApikey)
-        }
-    })
+                })
+            } else {
+                res.send(isApikey)
+            }
+        })
+    }catch (e) {
+        console.log(e)
+    }
 })
 
 router.post('/api/deleteTodo', (req, res) => {
-    checkapikey(req.body.userid, req.body.apikey, function (isApikey) {
-        if (isApikey.code === API_CODE.OK) {
-            var sql = 'SELECT * FROM user WHERE userid =?';
-            connection.query(sql, [req.body.userid], function (err, result) {
-                if (err) {
-                    let data = {
-                        code: API_CODE.ERR_DATA,
-                        message: '数据库错误'
-                    }
-                    res.send(data);
-                    return err;
-                }
-                if (result[0]) {
-                    var sql1 = 'DELETE FROM list WHERE taskid=?';
-                    connection.query(sql1, [req.body.taskid], function (err, result) {
-                        if (err) {
-                            let data = {
-                                code: API_CODE.ERR_DATA,
-                                message: '数据库错误'
-                            }
-                            res.send(data);
-                            return err;
-                        }
+    try{
+        checkapikey(req.body.userid, req.body.apikey, function (isApikey) {
+            if (isApikey.code === API_CODE.OK) {
+                var sql = 'SELECT * FROM user WHERE userid =?';
+                connection.query(sql, [req.body.userid], function (err, result) {
+                    if (err) {
                         let data = {
-                            code: API_CODE.OK,
-                            message: '删除成功'
+                            code: API_CODE.ERR_DATA,
+                            message: '数据库错误'
                         }
                         res.send(data);
-                    });
+                        return err;
+                    }
+                    if (result[0]) {
+                        var sql1 = 'DELETE FROM list WHERE taskid=?';
+                        connection.query(sql1, [req.body.taskid], function (err, result) {
+                            if (err) {
+                                let data = {
+                                    code: API_CODE.ERR_DATA,
+                                    message: '数据库错误'
+                                }
+                                res.send(data);
+                                return err;
+                            }
+                            let data = {
+                                code: API_CODE.OK,
+                                message: '删除成功'
+                            }
+                            res.send(data);
+                        });
+                    }
+                })
+            } else {
+                res.send(isApikey)
+            }
+        })
+    }catch (e) {
+        console.log(e)
+    }
+})
+
+router.post('/api/collectLoadTime',(req,res)=>{
+    try{
+        var sql = 'insert into load_time (`loadtime`) value (?)';
+        connection.query(sql, [req.body.loadtime], function (err, result) {
+            if (err) {
+                let data = {
+                    code: API_CODE.ERR_DATA,
+                    data: '数据库错误'
                 }
-            })
-        } else {
-            res.send(isApikey)
-        }
-    })
+                res.send(data);
+                return;
+            }
+            let data = {
+                code: API_CODE.OK,
+                lid: result.insertId
+            }
+            res.send(data);
+        });
+    }catch (e) {
+       console.log(e)
+    }
 })
 
 
