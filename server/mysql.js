@@ -28,7 +28,7 @@ router.use(bodyParser.json());
 connection.connect()
 
 function checkapikey(userid,apikey,callback){
-    try {
+
         var  sql = 'SELECT `apikey` FROM user WHERE userid =?';
         connection.query(sql,[userid],function (err, result){
             if(err){
@@ -76,9 +76,6 @@ function checkapikey(userid,apikey,callback){
                 }
             }
         });
-    }catch (e) {
-        console.log(e)
-    }
 }
 
 router.all('*', (req, res, next) => {
@@ -89,7 +86,7 @@ router.all('*', (req, res, next) => {
 });
 
 router.post('/api/login', (req, res) => {
-    try{
+
         var  sql = 'SELECT * FROM user WHERE username =?';
         connection.query(sql,[req.body.username],function (err, result){
             if(err){
@@ -120,39 +117,43 @@ router.post('/api/login', (req, res) => {
                             res.send(data);
                         }
                         else {
-                            if(moment(result[0].logintime,['YYYY-MM-DD']) !== moment().format('YYYY-MM-DD')) {
-                                let sql2='SELECT * FROM login_times_daily WHERE date =?';
-                                connection.query(sql2,[moment.format('YYYY-MM-DD')],function (err, result2) {
-                                    if(err) {
-                                        let data = {
-                                            code: API_CODE.ERR_DATA,
-                                            message: 'SELECT数据库错误'
-                                        }
-                                        res.send(data);
+                            let datenow=moment().format('YYYY-MM-DD')
+                            let datepre=moment(result[0].logintime).format(['YYYY-MM-DD']);
+                            console.log(datenow,datepre)
+                            if(datepre !== datenow) {
+                                let sql2 = 'SELECT * FROM login_times_daily WHERE date =?';
+                                connection.query(sql2, [datenow], function (err, result2) {
+                                    console.log(result2)
+                                    if (err) {
+                                        console.log(err)
                                     }
-                                    if(result2[0]!==undefined){
-                                        let times=result2[0].times+1
-                                        let sql3='UPDATE login_times_daily SET `times`=? WHERE date=?';
-                                        connection.query(sql3,[times,moment.format('YYYY-MM-DD')],function (err, result3) {
-                                            if(err) {
-                                                let data = {
-                                                    code: API_CODE.ERR_DATA,
-                                                    message: 'UPDATE数据库错误'
-                                                }
-                                                res.send(data);
+                                    if (result2[0] !== undefined) {
+                                        let times = result2[0].times + 1
+                                        let sql3 = 'UPDATE login_times_daily SET `times`=? WHERE date=?';
+                                        connection.query(sql3, [times, datenow], function (err, result3) {
+                                            if (err) {
+                                                console.log(err)
+                                            }
+                                        })
+                                    }
+                                    else{
+                                        let sql4 = 'INSERT INTO `login_times_daily`(`date`) VALUES (?)';
+                                        connection.query(sql4, [datenow], function (err, result4) {
+                                            if (err) {
+                                                console.log(err)
                                             }
                                         })
                                     }
                                 })
-                                let data={
-                                    code:API_CODE.OK,
-                                    message:'登录成功',
-                                    data:result[0],
-                                    newapikey:apikey
-                                }
+                            }
+                        let data={
+                            code:API_CODE.OK,
+                            message:'登录成功',
+                            data:result[0],
+                            newapikey:apikey
+                            }
                                 res.send(data);
                             }
-                        }
                     });
                 }
                 else
@@ -166,14 +167,9 @@ router.post('/api/login', (req, res) => {
             }
 
         });
-    }catch (e) {
-        console.log(e)
-    }
-
 })
 
 router.post('/api/regist', (req, res) => {
-    try{
         const  sql = 'SELECT * FROM user WHERE username ="'+req.body.username+'"';
         connection.query(sql,function (err, result){
             if(result[0]){
@@ -211,13 +207,10 @@ router.post('/api/regist', (req, res) => {
                 });
             }
         });
-    }catch (e) {
-        console.log(e)
-    }
+
 })
 
 router.post('/api/getTodo', (req, res) => {
-    try{
         checkapikey(req.body.userid, req.body.apikey, function (isApikey) {
             if (isApikey.code === API_CODE.OK) {
                 const sql = 'SELECT * FROM list WHERE userid =? ';
@@ -242,13 +235,9 @@ router.post('/api/getTodo', (req, res) => {
                 res.send(isApikey)
             }
         })
-    }catch (e) {
-        console.log(e)
-    }
 })
 
 router.post('/api/addTodo', (req, res) => {
-    try{
         checkapikey(req.body.userid, req.body.apikey, function (isApikey) {
             if (isApikey.code === API_CODE.OK) {
                 var sql = 'SELECT * FROM user WHERE userid =? ';
@@ -282,13 +271,10 @@ router.post('/api/addTodo', (req, res) => {
                 res.send(isApikey)
             }
         })
-    }catch (e) {
-        console.log(e)
-    }
 })
 
 router.post('/api/changeTodo', (req, res) => {
-    try{
+
         checkapikey(req.body.userid, req.body.apikey, function (isApikey) {
             if (isApikey.code === API_CODE.OK) {
                 var sql = 'SELECT * FROM user WHERE userid =?';
@@ -323,13 +309,9 @@ router.post('/api/changeTodo', (req, res) => {
                 res.send(isApikey)
             }
         })
-    }catch (e) {
-        console.log(e)
-    }
 })
 
 router.post('/api/deleteTodo', (req, res) => {
-    try{
         checkapikey(req.body.userid, req.body.apikey, function (isApikey) {
             if (isApikey.code === API_CODE.OK) {
                 var sql = 'SELECT * FROM user WHERE userid =?';
@@ -365,13 +347,9 @@ router.post('/api/deleteTodo', (req, res) => {
                 res.send(isApikey)
             }
         })
-    }catch (e) {
-        console.log(e)
-    }
 })
 
 router.post('/api/collectLoadTime',(req,res)=>{
-    try{
         var sql = 'insert into load_time (`loadtime`) value (?)';
         connection.query(sql, [req.body.loadtime], function (err, result) {
             if (err) {
@@ -388,9 +366,6 @@ router.post('/api/collectLoadTime',(req,res)=>{
             }
             res.send(data);
         });
-    }catch (e) {
-       console.log(e)
-    }
 })
 
 
