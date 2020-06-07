@@ -3,11 +3,11 @@ import FlipMove from "react-flip-move";
 
 
 import "../../common/css/box.css"
+import {KEY_CODE} from "../../common/js/const"
 
 var count = 0;
 
-const ENTER_KEY = 13;
-const ESCAPE_KEY = 27;
+
 
 class TodoItems extends Component {
 
@@ -47,10 +47,10 @@ class TodoItems extends Component {
     }*/
 
     handleKeyDown(event,item) {
-        if (event.keyCode === ESCAPE_KEY) {
+        if (event.keyCode === KEY_CODE.ESCAPE_KEY) {
             this.changeInput(item.taskid,!item.isChangeInput)
             this._inputElement.focus()
-        } else if (event.keyCode === ENTER_KEY) {
+        } else if (event.keyCode === KEY_CODE.ENTER_KEY) {
             this.changeItem(item.taskid,{task:this._inputElement,
                                                      isdone:this.isdone});
             this.changeInput(item.taskid,!item.isChangeInput)

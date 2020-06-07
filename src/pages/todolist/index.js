@@ -6,9 +6,7 @@ import "../../TodoList.css";
 import {API_CODE, LOGIN_URL} from "../../common/js/api";
 import {addTodo, deleteTodo, getTodo,changeTodo, logout} from "../../common/js/actions";
 
-
-const ENTER_KEY = 13;
-const ESCAPE_KEY = 27;
+import {KEY_CODE} from "../../common/js/const"
 
 
 class TodoList extends Component {
@@ -146,10 +144,10 @@ class TodoList extends Component {
   }
 
   handleKeyDown(event) {
-    if (event.keyCode === ESCAPE_KEY) {
+    if (event.keyCode === KEY_CODE.ESCAPE_KEY) {
       this.setState({editText: this.props.todo.title});
       this.props.onCancel(event);
-    } else if (event.keyCode === ENTER_KEY) {
+    } else if (event.keyCode === KEY_CODE.ENTER_KEY) {
       this.addItem(event);
     }
   }
