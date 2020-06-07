@@ -2,8 +2,8 @@ import React, { Component } from "react";
 
 import TodoItems from "./TodoItems";
 import "../../TodoList.css";
-import {API_CODE, LOGIN_URL , KEY_CODE} from "../../common/js/api";
-import {addTodo, deleteTodo, getTodo,changeTodo, logout} from "../../common/js/actions";
+import {API_CODE, LOGIN_URL, KEY_CODE, API_LIST} from "../../common/js/api";
+import {logout, apiRequest} from "../../common/js/actions";
 
 class TodoList extends Component {
   loginInfo = JSON.parse(window.localStorage.getItem('loginInfo'))
@@ -14,7 +14,7 @@ class TodoList extends Component {
     }
     var that=this
     //获取后台服务器中的Todo数据并存入本地
-    getTodo(this.loginInfo,function (result) {
+    apiRequest(API_LIST.GET_TODO,this.loginInfo,function (result) {
       if(result.code === API_CODE.OK){
         for(let j = 0,len=result.data.length; j < len; j++) {
           result.data[j].isChangeInput=false
@@ -39,7 +39,7 @@ class TodoList extends Component {
       apikey:this.loginInfo.apikey,
       taskid:taskid
     }
-    deleteTodo(data,function (result) {
+    apiRequest(API_LIST.DELETE_TODO, data,function (result) {
       if(result.code === API_CODE.ERR_LOGOUT){
         alert(result.message)
         logout(that)
@@ -72,7 +72,7 @@ class TodoList extends Component {
         key: Date.now(),
         isChangeInput:false
       };
-      addTodo(newItem,function (result) {
+      apiRequest(API_LIST.ADD_TODO, newItem,function (result) {
         console.log(result)
         if (result.code === API_CODE.ERR_LOGOUT) {
           logout(that);
@@ -107,7 +107,7 @@ class TodoList extends Component {
           isdone:changedState.isdone,
           key: Date.now()
         };
-        changeTodo(changedItem,function (result) {
+        apiRequest(API_LIST.CHANGE_TODO, changedItem,function (result) {
           if (result.code === API_CODE.ERR_LOGOUT) {
             logout(that);
             return;

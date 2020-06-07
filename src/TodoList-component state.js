@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import TodoItems from "./pages/todolist/TodoItems";
 import "./TodoList.css";
-class TodoList extends Component {
+class TodoListComponentState extends Component {
 
     constructor(props) {
         super(props);
@@ -58,4 +58,4 @@ class TodoList extends Component {
     }
 }
 
-export default TodoList;
+export default TodoListComponentState;

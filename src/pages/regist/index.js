@@ -4,8 +4,8 @@ import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
 import { Container, Row, Col } from 'reactstrap';
 
 
-import {API_CODE, encryptPassword, TODOLIST_URL} from '../../common/js/api'
-import {signup} from "../../common/js/actions";
+import {API_CODE, API_LIST, encryptPassword, TODOLIST_URL} from '../../common/js/api'
+import {apiRequest} from "../../common/js/actions";
 import '../../common/css/Login.css';
 
 
@@ -46,7 +46,7 @@ class regist extends Component {
             username,
             password,
         }
-        signup(data,function (result) {
+        apiRequest(API_LIST.USER_SIGNIN, data,function (result) {
             that.setState({loading: false})
             if (result.code === API_CODE.OK) {
                 window.localStorage.setItem('loginInfo', JSON.stringify({

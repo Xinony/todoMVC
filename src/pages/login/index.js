@@ -4,12 +4,9 @@ import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
 import { Container, Row, Col } from 'reactstrap';
 
 
-import {API_CODE, encryptPassword, REGIST_URL, TODOLIST_URL} from '../../common/js/api'
+import {API_CODE, API_LIST, encryptPassword, REGIST_URL, TODOLIST_URL} from '../../common/js/api'
 import '../../common/css/Login.css';
-import {login,logout} from "../../common/js/actions";
-
-
-
+import {apiRequest, logout} from "../../common/js/actions";
 
 
 class Login extends Component {
@@ -53,7 +50,7 @@ class Login extends Component {
       password,
     }
     //提交数据给后台服务器
-    login(data,function (result) {
+    apiRequest(API_LIST.USER_SIGNIN,data,function (result) {
       that.setState({loading: false})
       //登录成功
       if (result.code === API_CODE.OK) {
