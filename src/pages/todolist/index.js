@@ -15,6 +15,11 @@ class TodoList extends Component {
     var that=this
     //获取后台服务器中的Todo数据并存入本地
     apiRequest(API_LIST.GET_TODO,this.loginInfo,function (result) {
+      if(result.code === API_CODE.ERR_LOGOUT){
+        logout();
+        alert(result.message)
+        return;
+      }
       if(result.code === API_CODE.OK){
         for(let j = 0,len=result.data.length; j < len; j++) {
           result.data[j].isChangeInput=false

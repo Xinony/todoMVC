@@ -69,7 +69,7 @@ function checkapikey(userid,apikey,callback){
                 {
                     let data = {
                         code: API_CODE.ERR_LOGOUT,
-                        message: '身份信息错误，请重新登录！'
+                        message: '您的账号已在其他地方登录，请重新登录！'
                     };
                     callback(data);
                 }
