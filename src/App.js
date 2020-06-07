@@ -13,9 +13,9 @@ class App extends Component {
                 <Fragment>
                     <HashRouter>
                         <Switch>
+                            <Route exact path="/todolist" component={TodoList} />
                             <Route exact path="/regist" component={regist} />
-                            <Route exact path="/login" component={Login} />
-                            <Route path="/" component={TodoList} />
+                            <Route path="/" component={Login} />
                         </Switch>
                     </HashRouter>
                 </Fragment>

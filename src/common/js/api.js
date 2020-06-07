@@ -1,11 +1,10 @@
-let API_DOMAIN = '/api/'
-export let LOGIN_URL = '/#/login'
-if(process.env.NODE_ENV === 'production') {
-    API_DOMAIN = '/api/'
-    LOGIN_URL = '/#/login'
-}
+import MD5 from "js-md5";
 
-export const LOGIN_PAGE_URL = LOGIN_URL
+let API_DOMAIN = '/api/'
+export const LOGIN_URL = '/#/'
+export const REGIST_URL = '/#/regist'
+export const TODOLIST_URL = '/#/todolist'
+
 
 // API请求正常，数据正常
 export const API_CODE = {
@@ -42,6 +41,20 @@ export const API_LIST = {
     DELETE_TODO: API_DOMAIN + 'deleteTodo',
     //获取页面加载时间
     COLLECT_LOAD_TIME:API_DOMAIN + 'collectLoadTime'
+}
+//键盘上按键常量
+export const KEY_CODE = {
+    //ENTER键
+    ENTER_KEY : 13,
+    //ESC键
+    ESCAPE_KEY : 27
+}
+
+const salt="xinoxinoxino";
+
+// 密码加密
+export function encryptPassword(password) {
+    return MD5(salt+MD5(password));
 }
 
 

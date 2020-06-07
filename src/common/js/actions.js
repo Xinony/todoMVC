@@ -1,4 +1,4 @@
-import { API_LIST, API_CODE,LOGIN_PAGE_URL} from './api'
+import { API_LIST, API_CODE,LOGIN_URL} from './api'
 import axios from "axios";
 
 //用户登录
@@ -8,9 +8,9 @@ export function login(data,callback) {
     })
 }
 // 用户登出或失效退出界面
-export function logout(_this) {
+export function logout() {
     window.localStorage.removeItem('loginInfo')
-    _this.props.history.push('/login')
+    window.location.href=LOGIN_URL
 }
 //用户注册
 export function signup(data,callback) {
@@ -49,14 +49,14 @@ export function checkapikey(callback) {
         if(res.data.code === API_CODE.ERR_LOGOUT){
             window.localStorage.removeItem('loginInfo');
             window.localStorage.removeItem('items');
-            window.location.href=LOGIN_PAGE_URL;
+            window.location.href=LOGIN_URL;
         }
         else {
             callback && callback(res.data);
         }
     })
-
 }
+//获取页面首次加载时间
 export function loadtime() {
     if(window.name ===  ""){
         var starttime=window.localStorage.getItem('starttime')
@@ -66,8 +66,6 @@ export function loadtime() {
                 console.log(res.data)
             })
         }
-        window.name = "isReload"; // 在首次进入页面时我们可以给window.name设置一个固定值
-    }else if(window.name === "isReload"){
-
+        window.name = "isReload"; // 在首次进入页面时给window.name设置一个固定值
     }
 }

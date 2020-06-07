@@ -230,7 +230,6 @@ router.post('/api/regist', (req, res) => {
                 });
             }
         });
-
 })
 
 router.post('/api/getTodo', (req, res) => {
@@ -297,7 +296,6 @@ router.post('/api/addTodo', (req, res) => {
 })
 
 router.post('/api/changeTodo', (req, res) => {
-
         checkapikey(req.body.userid, req.body.apikey, function (isApikey) {
             if (isApikey.code === API_CODE.OK) {
                 var sql = 'SELECT * FROM user WHERE userid =?';

@@ -1,16 +1,15 @@
 import React, { Component } from 'react'
-import MD5 from 'js-md5'
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
 import { Container, Row, Col } from 'reactstrap';
 
 
-import { API_CODE} from '../../common/js/api'
+import {API_CODE, encryptPassword, REGIST_URL, TODOLIST_URL} from '../../common/js/api'
 import '../../common/css/Login.css';
-import {login} from "../../common/js/actions";
+import {login,logout} from "../../common/js/actions";
 
 
-const salt="xinoxinoxino"
+
 
 
 class Login extends Component {
@@ -21,50 +20,42 @@ class Login extends Component {
     loading: false
   }
 
+  //获取用户名
   handleAccountChange(event) {
     this.setState({username: event.target.value});
   }
 
+  //获取密码
   handlePasswordChange(event) {
     this.setState({password: event.target.value});
   }
 
-  // 密码加密
-  encryptPassword() {
-    return MD5(salt+MD5(this.state.password));
-  }
-
-  // 检查合法输入
-  checkValidate() {
-    return this.state.username.length > 0 &&
-        this.state.password.length > 0;
-
-  }
-
-  inputBlur() {
-    window.scrollTo(0, 0)
-  }
-
+  //提交登录
   loginSubmit() {
     var that = this;
+    //验证用户名
     if (this.state.username.length === 0) {
-      alert('请输入账号')
+      alert('请输入用户名')
       return false
     }
+    //验证密码
     if (this.state.password.length === 0) {
       alert('请输入密码');
       return false
     }
-    const {username} = this.state
-    const password = this.encryptPassword()
+
+    const username = this.state.username
+    //密码加密
+    const password = encryptPassword(this.state.password)
     this.setState({loading: true})
     let data = {
       username,
       password,
     }
+    //提交数据给后台服务器
     login(data,function (result) {
-      console.log(result);
       that.setState({loading: false})
+      //登录成功
       if (result.code === API_CODE.OK) {
         window.localStorage.setItem('loginInfo', JSON.stringify({
           userid: result.data.userid,
@@ -73,23 +64,31 @@ class Login extends Component {
           apikey: result.newapikey,
           logintime: result.data.logintime
         }))
-        console.log(window.localStorage.getItem('loginInfo'))
-        that.props.history.push('/')
+        window.location.href=TODOLIST_URL
       } else {
-        alert(result.data);
+        alert(result.message);//登录失败
       }
     })
   }
 
+  //到注册页面
   ToSignup() {
-    this.props.history.push('/regist')
+    window.location.href=REGIST_URL;
   }
 
 
   render() {
-    if(window.localStorage.getItem('loginInfo')){
-      window.location.href='/'
-      return null
+    //获取用户上次获取的apikey并初步检测是否过期
+    if(window.localStorage.getItem('loginInfo'))
+    {
+      var pre_load_time=window.localStorage.getItem('loginInfo').apikey
+      if(Date.now()-pre_load_time>60*1000*1000){
+        logout()
+      }
+      else{
+        window.location.href='/#/todolist'
+        return null
+      }
     }
     else{
     return (

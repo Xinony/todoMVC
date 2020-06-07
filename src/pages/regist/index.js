@@ -1,16 +1,14 @@
 import React, { Component } from 'react'
-import MD5 from 'js-md5'
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
 import { Container, Row, Col } from 'reactstrap';
 
 
-import {API_CODE} from '../../common/js/api'
+import {API_CODE, encryptPassword, TODOLIST_URL} from '../../common/js/api'
 import {signup} from "../../common/js/actions";
 import '../../common/css/Login.css';
 
 
-const salt="xinoxinoxino"
 
 
 class regist extends Component {
@@ -30,22 +28,7 @@ class regist extends Component {
         this.setState({password: event.target.value});
     }
 
-    // 密码加密
-    encryptPassword() {
-        return MD5(salt+MD5(this.state.password));
-    }
-
-    // 检查合法输入
-    checkValidate() {
-        return this.state.username.length > 0 &&
-            this.state.password.length > 0;
-
-    }
-
-    inputBlur() {
-        window.scrollTo(0, 0)
-    }
-
+    //提交注册
     registSubmit() {
         var that = this;
         if (this.state.username.length === 0) {
@@ -57,7 +40,7 @@ class regist extends Component {
             return false
         }
         const username = this.state.username
-        const password = this.encryptPassword()
+        const password = encryptPassword(this.state.password)
         this.setState({loading: true})
         let data = {
             username,
@@ -73,9 +56,9 @@ class regist extends Component {
                     apikey: result.userInfo.apikey,
                     logintime: result.userInfo.logintime
                 }))
-                that.props.history.push('/')
+                window.location.href=TODOLIST_URL
             } else {
-                alert(result.data);
+                alert(result.message);
             }
         })
     }

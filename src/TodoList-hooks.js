@@ -1,7 +1,6 @@
-import React from "react";
+import React,{ useState } from "react";
 import TodoItems from "./pages/todolist/TodoItems";
 import "./TodoList.css";
-import { useState } from 'react';
 
 function TodoListhooks() {
     const [items, setItem] = useState([]);

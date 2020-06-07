@@ -1,13 +1,9 @@
 import React, { Component } from "react";
 
-
 import TodoItems from "./TodoItems";
 import "../../TodoList.css";
-import {API_CODE, LOGIN_URL} from "../../common/js/api";
+import {API_CODE, LOGIN_URL , KEY_CODE} from "../../common/js/api";
 import {addTodo, deleteTodo, getTodo,changeTodo, logout} from "../../common/js/actions";
-
-import {KEY_CODE} from "../../common/js/const"
-
 
 class TodoList extends Component {
   loginInfo = JSON.parse(window.localStorage.getItem('loginInfo'))
@@ -17,6 +13,7 @@ class TodoList extends Component {
       items:[]
     }
     var that=this
+    //获取后台服务器中的Todo数据并存入本地
     getTodo(this.loginInfo,function (result) {
       if(result.code === API_CODE.OK){
         for(let j = 0,len=result.data.length; j < len; j++) {
@@ -25,7 +22,6 @@ class TodoList extends Component {
         that.setState({
           items: result.data
         })
-
         window.localStorage.setItem('items',JSON.stringify(result.data));
       }
     })
@@ -35,6 +31,7 @@ class TodoList extends Component {
     this.changeInput = this.changeInput.bind(this);
   }
 
+  //删除事件
   deleteItem(taskid) {
     var that=this;
     let data = {
@@ -63,6 +60,7 @@ class TodoList extends Component {
     })
   }
 
+  //添加事件
   addItem(e) {
     var that=this
     if (this._inputElement.value !== "") {
@@ -95,6 +93,8 @@ class TodoList extends Component {
     }
     e.preventDefault();
   }
+
+  //更改事件名称或完成情况
   changeItem(taskid,changedState) {
     const that=this;
     for(let j = 0,len=this.state.items.length; j < len; j++) {
@@ -125,6 +125,7 @@ class TodoList extends Component {
     }
   }
 
+  //更改是否为输入框
   changeInput(taskid,state){
     for(let j = 0,len=this.state.items.length; j < len; j++) {
       if(taskid === this.state.items[j].taskid) {
@@ -138,16 +139,15 @@ class TodoList extends Component {
     }
   }
 
+  //登出
   logout() {
     window.localStorage.removeItem('loginInfo')
     this.props.history.push('/login')
   }
 
+  //键盘按下触发
   handleKeyDown(event) {
-    if (event.keyCode === KEY_CODE.ESCAPE_KEY) {
-      this.setState({editText: this.props.todo.title});
-      this.props.onCancel(event);
-    } else if (event.keyCode === KEY_CODE.ENTER_KEY) {
+   if (event.keyCode === KEY_CODE.ENTER_KEY) {
       this.addItem(event);
     }
   }
