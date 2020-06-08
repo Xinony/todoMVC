@@ -46,7 +46,7 @@ class regist extends Component {
             username,
             password,
         }
-        apiRequest(API_LIST.USER_SIGNIN, data,function (result) {
+        apiRequest(API_LIST.USER_SIGNUP, data,function (result) {
             that.setState({loading: false})
             if (result.code === API_CODE.OK) {
                 window.localStorage.setItem('loginInfo', JSON.stringify({
