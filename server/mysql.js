@@ -18,7 +18,7 @@ const API_CODE = {
 const connection = mysql.createConnection({
     host: 'localhost', //mysql连接ip地址
     user: 'root',
-    password: 'Xino.0914', //mySql用户名密码
+    password: '******', //mySql用户名密码
     database: 'todolist',
     port: '3306' //mysql连接端口
 });
